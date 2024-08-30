@@ -4,12 +4,24 @@ Explore precinct-level results from recent and historical Chicago elections.
 
 ![Screenshot of northeast Illinois presidential results](./src/img/chi-elections-social.png "Screenshot of 2019 Chicago mayoral general election results")
 
-## Setup
+## Setup - native
 
 ```shell
 poetry install
 npm install
 make all
+```
+
+## Setup - Docker
+
+To build the containers and make the data:
+```shell
+docker-compose build
+```
+
+To run the site locally:
+```shell
+docker-compose up
 ```
 
 ## Updating Data
