@@ -10,7 +10,7 @@ RUN apt-get update && \
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package*.json ./
-COPY pyproject.toml .
+COPY pyproject.toml ./
 
 RUN pip install poetry
 RUN pip install esridump
@@ -21,6 +21,6 @@ RUN git clone https://github.com/mapbox/tippecanoe.git
 RUN cd tippecanoe && make -j && make install
 
 # Bundle app source
-COPY . .
+COPY . /usr/src/app/
 
-RUN poetry run make all
+RUN make all
