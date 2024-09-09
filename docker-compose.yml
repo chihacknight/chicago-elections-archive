@@ -10,8 +10,9 @@ services:
     volumes:
       - .:/usr/src/app
       - chicago-elections-archive-modules:/usr/src/app/node_modules
-    # entrypoint: ["/bin/bash", "-c"]
-    command: npm run build && npm run start
+    env_file:
+      - .env
+    command: npm start
 
 volumes:
   # Making node_modules a named volume prevents the ./app volume mount from
