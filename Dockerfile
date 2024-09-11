@@ -23,4 +23,4 @@ RUN cd tippecanoe && make -j && make install
 # Bundle app source
 COPY . /usr/src/app/
 
-RUN make all
+RUN npm run build
