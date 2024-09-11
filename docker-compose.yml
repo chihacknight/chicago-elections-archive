@@ -1,0 +1,20 @@
+services:
+  app:
+    image: chicago-elections-archive
+    build: .
+    container_name: chicago-elections-archive
+    stdin_open: true
+    tty: true
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/usr/src/app
+      - chicago-elections-archive-modules:/usr/src/app/node_modules
+    env_file:
+      - .env
+    command: npm start
+
+volumes:
+  # Making node_modules a named volume prevents the ./app volume mount from
+  # clobbering the directory in the container.
+  chicago-elections-archive-modules:
