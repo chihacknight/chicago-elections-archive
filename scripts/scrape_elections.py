@@ -8,7 +8,7 @@ from asyncio import run
 
 
 
-def book_pandas(book: BytesIO):
+def book_pandas(book: BytesIO, race: int, contest: int):
     workbook: xlrd.Book = xlrd.open_workbook(file_contents=book, ignore_workbook_corruption=True)
     sheet = workbook.sheet_by_index(0)
     rows = sheet.get_rows()
@@ -21,7 +21,6 @@ def book_pandas(book: BytesIO):
     while cur_row:
 
         ward = cur_row[0].value
-        print(ward)
         cur_row = next(rows)
         sub_table = []
         try:
@@ -31,14 +30,13 @@ def book_pandas(book: BytesIO):
         except StopIteration:
             pass
         cols = sub_table[0]
-        print(sub_table)
-        print(cols)
+        cols = [col if col != '%' else cols[i-1] + " %" for i, col in enumerate(cols)]
         for i in range(len(cols)):
             if cols[i] == "%":
                 cols[i] = f"{cols[i-1]} %"
         subtables[ward] = pd.DataFrame(sub_table[1:], columns=sub_table[0]).set_index('Precinct').to_dict(orient="index")
         cur_row = next(rows, None)
-    dump(subtables, open("subtable.json", 'w'))
+    dump(subtables, open(f"{race}_{contest}_election.json", 'w'), indent = 2)
 
     return subtables
 
@@ -46,11 +44,10 @@ async def main():
 
     results_metadata: dict = load(open("../output/results-metadata.json", "r"))
     pairs = [(contest, race) for contest, c_info in results_metadata.items() for race in c_info["races"]]
-    #print(len(pairs))
     #async with ClientSession() as cs:
     #    async with cs.get("https://chicagoelections.gov/elections/results/156/download?contest=15&ward=&precinct=") as resp:
     #        book_pandas(await resp.content.read())
-    book_pandas(open("/home/yash/Downloads/download.xls", "rb").read())
+    book_pandas(open("/home/yash/Downloads/download.xls", "rb").read(), 156, 15)
 
 if __name__ == "__main__":
     run(main())
