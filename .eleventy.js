@@ -88,6 +88,8 @@ module.exports = function (eleventyConfig) {
     },
   })
 
+  eleventyConfig.addGlobalData("geojsonDomain", process.env.GEOJSON_DOMAIN);
+
   return {
     dir: {
       input: "site/",
