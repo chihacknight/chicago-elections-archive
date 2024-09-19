@@ -27,19 +27,20 @@ TOLERANCE_FT = 100
 def get_geojson_url(year):
     return f'https://chicago-elections-archive.us-east-1.linodeobjects.com/precincts-{year}.geojson'
 
+
 def handle_legacy_geojson(s3, bucket):
   for year in PRECINT_YEARS:
       url = get_geojson_url(year)
       r = requests.get(url)
       # write to ../input/precincts-{year}.geojson
-      with open(f'../input/precincts-{year}.geojson', 'wb') as f:
+      with open(f'../output/geojson/precincts-{year}.geojson', 'wb') as f:
           f.write(r.content)
 
-      s3.upload_file(
-        f'../input/precincts-{year}.geojson',
-        bucket, 
-        f'geojson/precincts-{year}.geojson'
-      )
+      # s3.upload_file(
+      #   f'../input/precincts-{year}.geojson',
+      #   bucket, 
+      #   f'geojson/precincts-{year}.geojson'
+      # )
 
 # %%
 if __name__ == '__main__':
@@ -51,3 +52,5 @@ if __name__ == '__main__':
   )
   
   handle_legacy_geojson(s3, BUCKET)
+
+# %%
