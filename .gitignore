@@ -5,6 +5,7 @@ input/*
 output/*
 !output/.keep
 !output/results-metadata.json
+!output/geojson
 deploy-output
 dist/*
 !dist/.keep
