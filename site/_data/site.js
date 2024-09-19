@@ -99,6 +99,9 @@ module.exports = {
   dataDomain:
     process.env.DATA_DOMAIN ||
     "chicago-elections-archive.us-east-1.linodeobjects.com",
+  geojsonDomain:
+    process.env.GEOJSON_DOMAIN ||
+    "chicago-elections-archive.us-east-1.linodeobjects.com",
   production,
   robots: production,
   plausibleAnalytics: !!process.env.PLAUSIBLE,
