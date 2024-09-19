@@ -76,7 +76,6 @@ const createPrecinctLayerDefinition = (data, election, race, year) => ({
   layerDefinition: {
     id: "precincts",
     source: `precincts-${getPrecinctYear(election, +year)}`,
-    "source-layer": "precincts",
     type: "fill",
     filter: filterExpression(data),
     paint: {
@@ -120,6 +119,7 @@ function setFeatureData(map, dataCols, source, feature) {
   const featureData = fromEntries(
     Object.entries(feature).filter(([col]) => dataCols.includes(col))
   )
+
   const featureDataEntries = [...Object.entries(featureData)]
   const featureDataValues = featureDataEntries.map(([, value]) => value)
   const colorValue = Math.max(...featureDataValues)
@@ -130,7 +130,6 @@ function setFeatureData(map, dataCols, source, feature) {
   map.setFeatureState(
     {
       source,
-      sourceLayer: "precincts",
       id: feature.id,
     },
     {
@@ -225,13 +224,14 @@ const Map = (props) => {
     setPopup({ click: false, hover: false })
 
     const updateLayer = () => {
+      const sourceName = mapSource()
+
       mapStore.map.removeLayer("precincts")
       mapStore.map.removeFeatureState({
-        source: mapSource(),
-        sourceLayer: "precincts",
+        source: sourceName,
       })
       data.forEach((feature) => {
-        setFeatureData(map, dataCols, mapSource(), feature)
+        setFeatureData(map, dataCols, sourceName, feature)
       })
       mapStore.map.addLayer(def.layerDefinition, "place_other")
     }

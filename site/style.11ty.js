@@ -9,12 +9,9 @@ exports.render = ({ site }) => {
     (acc, year) => ({
       ...acc,
       [`precincts-${year}`]: {
-        type: "vector",
+        type: 'geojson',
+        data: `${process.env.GEOJSON_DOMAIN}/precincts-${year}.geojson`,
         maxzoom: 12,
-        bounds: [-88.626521, 41.363644, -87.505916, 42.241965],
-        tiles: [
-          `https://${site.dataDomain}/tiles/precincts-${year}/{z}/{x}/{y}.pbf`,
-        ],
         attribution:
           year == 1983
             ? '<a href="https://www.chicagoelectionsproject.com/" target="_blank">Chicago Elections Project</a>'
