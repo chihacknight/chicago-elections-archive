@@ -56,7 +56,3 @@ export function mergeCsvAndGeojson(csvData, geojsonData) {
   )
   return geojsonData
 }
-
-export const CONSTANTS = {
-  geojsonDomain: window.geojsonDomain
-}
