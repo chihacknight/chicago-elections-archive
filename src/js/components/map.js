@@ -3,7 +3,21 @@ import { useMapStore } from "../providers/map"
 import { usePopup } from "../providers/popup"
 import { descending, fromEntries } from "../utils"
 import { getDataCols, getColor } from "../utils/map"
-import { getPrecinctYear, fetchCsvData } from "../utils/data"
+import { getPrecinctYear, fetchCsvData, CONSTANTS } from "../utils/data"
+
+const getSourceConfig = (sourceName) => {
+  const year = sourceName.split("-")[1]
+  return {
+    type: "geojson",
+    data: `${CONSTANTS.geojsonDomain}/precincts-${year}.geojson`,
+    maxzoom: 12,
+    attribution:
+      year == 1983
+        ? '<a href="https://www.chicagoelectionsproject.com/" target="_blank">Chicago Elections Project</a>'
+        : '<a href="https://chicagoelections.com/" target="_blank">Chicago Board of Election Commissioners</a>',
+    promoteId: "id",
+  }
+}
 
 const compactAttribControl = () => {
   const control = document.querySelector("details.maplibregl-ctrl-attrib")
@@ -225,11 +239,15 @@ const Map = (props) => {
 
     const updateLayer = () => {
       const sourceName = mapSource()
-
-      mapStore.map.removeLayer("precincts")
-      mapStore.map.removeFeatureState({
-        source: sourceName,
-      })
+      if (mapStore.map.getLayer("precincts")) {
+        mapStore.map.removeLayer("precincts")
+        mapStore.map.removeFeatureState({
+          source: sourceName,
+        })
+      }
+      if (!mapStore.map.getSource(sourceName)) {
+        mapStore.map.addSource(sourceName, getSourceConfig(sourceName))
+      }
       data.forEach((feature) => {
         setFeatureData(map, dataCols, sourceName, feature)
       })
