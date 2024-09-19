@@ -9,7 +9,7 @@ const getSourceConfig = (sourceName) => {
   const year = sourceName.split("-")[1]
   return {
     type: "geojson",
-    data: `${CONSTANTS.geojsonDomain}/precincts-${year}.geojson`,
+    data: `/data/geojson/precincts-${year}.geojson`,
     maxzoom: 12,
     attribution:
       year == 1983
