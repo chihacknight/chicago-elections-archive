@@ -5,22 +5,6 @@ exports.data = {
 }
 
 exports.render = ({ site }) => {
-  const precinctSources = site.precinctYears.reduce(
-    (acc, year) => ({
-      ...acc,
-      [`precincts-${year}`]: {
-        type: 'geojson',
-        data: `${process.env.GEOJSON_DOMAIN}/precincts-${year}.geojson`,
-        maxzoom: 12,
-        attribution:
-          year == 1983
-            ? '<a href="https://www.chicagoelectionsproject.com/" target="_blank">Chicago Elections Project</a>'
-            : '<a href="https://chicagoelections.com/" target="_blank">Chicago Board of Election Commissioners</a>',
-        promoteId: "id",
-      },
-    }),
-    {}
-  )
 
   return JSON.stringify({
     id: "positron",
@@ -36,7 +20,7 @@ exports.render = ({ site }) => {
         attribution:
           '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
       },
-      ...precinctSources,
+      // ...precinctSources,
     },
     sprite:
       "https://midwest-openmaptiles.us-east-1.linodeobjects.com/klokantech-basic/sprite",
@@ -908,21 +892,6 @@ exports.render = ({ site }) => {
               [22, 20],
             ],
           },
-        },
-      },
-      {
-        id: "precincts",
-        type: "fill",
-        source: `precincts-${site.precinctYears.slice(-1)[0]}`,
-        "source-layer": "precincts",
-        paint: {
-          "fill-outline-color": [
-            "case",
-            ["boolean", ["feature-state", "hover"], false],
-            "rgba(0,0,0,0.7)",
-            "rgba(0,0,0,0)",
-          ],
-          "fill-color": "rgba(0,0,0,0)",
         },
       },
       {
