@@ -1,14 +1,17 @@
 from io import BytesIO
 import xlrd
-from pprint import pprint
+from pprint import pprint 
 import pandas as pd
 from aiohttp import ClientSession
-from json import load, dump
-from asyncio import run
+from json import dump, load
+from asyncio import gather, run
+from aiohttp_client_cache import CachedSession, SQLiteBackend
+from requests import get
+from itertools import dropwhile
+from bs4 import BeautifulSoup
+DEBUG = True
 
-
-
-def book_pandas(book: BytesIO, race: int, contest: int):
+def book_pandas(book: BytesIO, race: int, contest: int, elec_data: dict):
     workbook: xlrd.Book = xlrd.open_workbook(file_contents=book, ignore_workbook_corruption=True)
     sheet = workbook.sheet_by_index(0)
     rows = sheet.get_rows()
@@ -34,20 +37,37 @@ def book_pandas(book: BytesIO, race: int, contest: int):
         for i in range(len(cols)):
             if cols[i] == "%":
                 cols[i] = f"{cols[i-1]} %"
-        subtables[ward] = pd.DataFrame(sub_table[1:], columns=sub_table[0]).set_index('Precinct').to_dict(orient="index")
+        subtables[ward] = pd.DataFrame(sub_table[1:], columns=cols).set_index('Precinct').to_dict(orient="index")
         cur_row = next(rows, None)
-    dump(subtables, open(f"{race}_{contest}_election.json", 'w'), indent = 2)
 
-    return subtables
+    elec_data.setdefault(race, {})[contest] = subtables
+
+async def fetch_contest_data(race: int, contest: int, cs: ClientSession, elec_data: dict):
+    print(f"race {race} contest {contest}")
+    resp = await cs.get(f"https://chicagoelections.gov/elections/results/{race}/download?contest={contest}&ward=&precinct=")
+    book_pandas(await resp.content.read(), race, contest, elec_data)
+
+async def fetch_races():
+    resp = get("https://chicagoelections.gov/elections/results")
+    soup = BeautifulSoup(resp, "lxml")
+    races = [dropwhile(lambda c: not c.isnumeric(), link['href']) for link in soup if link['href'].startswith("/elections/results")]
+    return races
+
+async def fetch_contests():
+    # <select name="contest"
+    raise NotImplementedError
 
 async def main():
 
     results_metadata: dict = load(open("../output/results-metadata.json", "r"))
-    pairs = [(contest, race) for contest, c_info in results_metadata.items() for race in c_info["races"]]
-    #async with ClientSession() as cs:
-    #    async with cs.get("https://chicagoelections.gov/elections/results/156/download?contest=15&ward=&precinct=") as resp:
-    #        book_pandas(await resp.content.read())
-    book_pandas(open("/home/yash/Downloads/download.xls", "rb").read(), 156, 15)
+    pairs = ((contest, race) for contest, c_info in results_metadata.items() for race in c_info["races"])
+    pairs = list(pairs)[:3]
+    print(pairs)
+    contest_data = {}
+    async with CachedSession(cache=SQLiteBackend('test_cache')) as cs:
+        await gather(*(fetch_contest_data(*pair, cs, contest_data) for pair in pairs))      
+    
+    dump(contest_data, open('data.json', 'w'), indent=2)
 
 if __name__ == "__main__":
     run(main())
