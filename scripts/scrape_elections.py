@@ -12,6 +12,9 @@ from bs4 import BeautifulSoup
 import warnings
 from multiprocessing import Pool
 from os import getenv
+import locale
+import csv
+locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
 
 DEBUG = getenv('DEBUG', 1)
 print(DEBUG)
@@ -21,6 +24,7 @@ warnings.filterwarnings("error")
 
 def book_pandas(d):
     contest, race, book = d['contest'], d['race'], d['data']
+    print(contest, race)
     try:
         workbook: xlrd.Book = xlrd.open_workbook(
             file_contents=book, ignore_workbook_corruption=True
@@ -30,16 +34,18 @@ def book_pandas(d):
         return 
     sheet = workbook.sheet_by_index(0)
     rows = sheet.get_rows()
-    total = []
-    subtables = {}
+    subtables = []
     for i in range(3):
         next(rows)
-    subtables["Total"] = total
     cur_row = next(rows)
+    cols = []
     while cur_row:
         ward = cur_row[0].value
+
+        #TODO: unfortunately there's a bug where, for certain races that simply can't be generated e.g. 
+        cols = next(rows)
+        cols = [col.value if col.value != "%" else cols[i - 1].value + " %" for i, col in enumerate(cols)]
         cur_row = next(rows)
-        sub_table = []
         try:
             while not all(
                 [
@@ -47,33 +53,28 @@ def book_pandas(d):
                     for cell in cur_row
                 ]
             ):
-                sub_table.append([cell.value for cell in cur_row])
+                print(type(cur_row[0].value))
+                row = [int(ward.split(' ')[1]),
+                       int(cur_row[0].value) if type(cur_row[0].value) is not str else cur_row[0].value , 
+                       int(cur_row[1].value) if type(cur_row[1].value) is not str else int(cur_row[1].value.replace(',','')),
+                       int(cur_row[2].value) if type(cur_row[2].value) is not str else int(cur_row[2].value.replace(',','')),
+                       float(cur_row[3].value[:-1])]
+                subtables.append(row)
                 cur_row = next(rows)
         except StopIteration:
             pass
-        cols = sub_table[0]
-        cols = [col if col != "%" else cols[i - 1] + " %" for i, col in enumerate(cols)]
-        # Note for the future: moving to SQLite might be more performant than json.
-        # Certainly the file size would likely be smaller. 
-        for i in range(len(cols)):
-            if cols[i] == "%":
-                cols[i] = f"{cols[i-1]} %"
-        #TODO: unfortunately there's a bug where, for certain races that simply can't be generated e.g. 
-        subtables[ward] = (
-            pd.DataFrame(sub_table[1:], columns=cols)
-            .set_index("Precinct")
-            .to_dict(orient="index")
-        )
         cur_row = next(rows, None)
-    return {'contest': contest,
-                'race': race,
-                'data': subtables}
+    cols = ['Ward', *cols]
+    with open(f'../output/{race}_{contest}.csv', 'w') as ofp:
+        writer = csv.writer(ofp)
+        writer.writerow(cols)
+        writer.writerows(subtables)
+    return 
         
 
 async def fetch_contest_data(
     race: int, contest: int, cs: ClientSession, elec_data: dict, sem: Semaphore
 ):
-    # print(f"race {race} contest {contest}")
     await sem.acquire()
     try:
         resp = await cs.get(
@@ -81,7 +82,6 @@ async def fetch_contest_data(
         )
         resp.raise_for_status()
         # This happens for some contests e.g. https://chicagoelections.gov/elections/results/7/download?contest=334&ward=&precinct=
-        # print(resp.content_type)
         if resp.content_type != "application/vnd.ms-excel":
             raise RuntimeError(f"race {race} contest {contest} did not return an Excel spreadsheet")
         return {'contest': contest,
@@ -119,7 +119,7 @@ async def main():
         for race in c_info["races"]
     )
     if DEBUG == 1:
-        pairs = list(pairs)[:1000]
+        pairs = list(pairs)[:1]
         # pprint(pairs)
     contest_data = {}
     sem = Semaphore(10)
