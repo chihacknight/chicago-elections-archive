@@ -3,7 +3,21 @@ import { useMapStore } from "../providers/map"
 import { usePopup } from "../providers/popup"
 import { descending, fromEntries } from "../utils"
 import { getDataCols, getColor } from "../utils/map"
-import { getPrecinctYear, fetchCsvData } from "../utils/data"
+import { getPrecinctYear, fetchCsvData, CONSTANTS } from "../utils/data"
+
+const getSourceConfig = (sourceName) => {
+  const year = sourceName.split("-")[1]
+  return {
+    type: "geojson",
+    data: `/data/geojson/precincts-${year}.geojson`,
+    maxzoom: 12,
+    attribution:
+      year == 1983
+        ? '<a href="https://www.chicagoelectionsproject.com/" target="_blank">Chicago Elections Project</a>'
+        : '<a href="https://chicagoelections.com/" target="_blank">Chicago Board of Election Commissioners</a>',
+    promoteId: "id",
+  }
+}
 
 const compactAttribControl = () => {
   const control = document.querySelector("details.maplibregl-ctrl-attrib")
@@ -76,7 +90,6 @@ const createPrecinctLayerDefinition = (data, election, race, year) => ({
   layerDefinition: {
     id: "precincts",
     source: `precincts-${getPrecinctYear(election, +year)}`,
-    "source-layer": "precincts",
     type: "fill",
     filter: filterExpression(data),
     paint: {
@@ -120,6 +133,7 @@ function setFeatureData(map, dataCols, source, feature) {
   const featureData = fromEntries(
     Object.entries(feature).filter(([col]) => dataCols.includes(col))
   )
+
   const featureDataEntries = [...Object.entries(featureData)]
   const featureDataValues = featureDataEntries.map(([, value]) => value)
   const colorValue = Math.max(...featureDataValues)
@@ -130,7 +144,6 @@ function setFeatureData(map, dataCols, source, feature) {
   map.setFeatureState(
     {
       source,
-      sourceLayer: "precincts",
       id: feature.id,
     },
     {
@@ -225,13 +238,18 @@ const Map = (props) => {
     setPopup({ click: false, hover: false })
 
     const updateLayer = () => {
-      mapStore.map.removeLayer("precincts")
-      mapStore.map.removeFeatureState({
-        source: mapSource(),
-        sourceLayer: "precincts",
-      })
+      const sourceName = mapSource()
+      if (mapStore.map.getLayer("precincts")) {
+        mapStore.map.removeLayer("precincts")
+        mapStore.map.removeFeatureState({
+          source: sourceName,
+        })
+      }
+      if (!mapStore.map.getSource(sourceName)) {
+        mapStore.map.addSource(sourceName, getSourceConfig(sourceName))
+      }
       data.forEach((feature) => {
-        setFeatureData(map, dataCols, mapSource(), feature)
+        setFeatureData(map, dataCols, sourceName, feature)
       })
       mapStore.map.addLayer(def.layerDefinition, "place_other")
     }
