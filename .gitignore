@@ -23,3 +23,4 @@ site/data/*
 !site/data/.keep
 tiles/*
 !tiles/.keep
+!tiles/mapstyle.json
