@@ -1,9 +1,8 @@
 from io import BytesIO
 import xlrd
 from pprint import pprint
-import pandas as pd
 from aiohttp import ClientSession
-from json import dump, load
+from json import load
 from asyncio import Semaphore, gather, run
 from aiohttp_client_cache import CachedSession, SQLiteBackend
 from requests import get
@@ -14,24 +13,35 @@ from multiprocessing import Pool
 from os import getenv
 import locale
 import csv
-locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
+from pathlib import Path
 
-DEBUG = getenv('DEBUG', 1)
-print(DEBUG)
-SCRAPE_PROCESSES = getenv('SCRAPE_PROCESSES', 6) #my computer has 8 cores
+locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+
+DEBUG = getenv("DEBUG", 1)
+SCRAPE_PROCESSES = getenv("SCRAPE_PROCESSES", 6)  # my computer has 8 cores
 warnings.filterwarnings("error")
 
 
+def transform_type(v):
+    if v is None:
+        return None
+    if type(v) is float:
+        return int(v) if v.is_integer() else v
+    elif "," in v:
+        return int(v.replace(",", ""))
+    elif "%" in v:
+        return float(v[:-1])
+
 def book_pandas(d):
-    contest, race, book = d['contest'], d['race'], d['data']
-    print(contest, race)
+    contest, race = d["contest"], d["race"]
+    book: BytesIO = d["data"]
     try:
         workbook: xlrd.Book = xlrd.open_workbook(
             file_contents=book, ignore_workbook_corruption=True
         )
     except xlrd.XLRDError as e:
         print(e)
-        return 
+        return
     sheet = workbook.sheet_by_index(0)
     rows = sheet.get_rows()
     subtables = []
@@ -42,9 +52,12 @@ def book_pandas(d):
     while cur_row:
         ward = cur_row[0].value
 
-        #TODO: unfortunately there's a bug where, for certain races that simply can't be generated e.g. 
+        # TODO: unfortunately there's a bug where, for certain races that simply can't be generated e.g.
         cols = next(rows)
-        cols = [col.value if col.value != "%" else cols[i - 1].value + " %" for i, col in enumerate(cols)]
+        cols = [
+            col.value.lower() if col.value != "%" else cols[i - 1].value + " percent"
+            for i, col in enumerate(cols)
+        ]
         cur_row = next(rows)
         try:
             while not all(
@@ -53,24 +66,33 @@ def book_pandas(d):
                     for cell in cur_row
                 ]
             ):
-                print(type(cur_row[0].value))
-                row = [int(ward.split(' ')[1]),
-                       int(cur_row[0].value) if type(cur_row[0].value) is not str else cur_row[0].value , 
-                       int(cur_row[1].value) if type(cur_row[1].value) is not str else int(cur_row[1].value.replace(',','')),
-                       int(cur_row[2].value) if type(cur_row[2].value) is not str else int(cur_row[2].value.replace(',','')),
-                       float(cur_row[3].value[:-1])]
+                row = [
+                    int(ward.split(" ")[1]),
+                    *(
+                        cell.value
+                        if cell.ctype not in (xlrd.XL_CELL_EMPTY, xlrd.XL_CELL_BLANK)
+                        else None
+                        for cell in cur_row
+                    ),
+                ]
                 subtables.append(row)
                 cur_row = next(rows)
         except StopIteration:
             pass
+        except ValueError as e:
+            print(race, contest)
+            pprint(cur_row)
+            print(e)
+            raise e
         cur_row = next(rows, None)
-    cols = ['Ward', *cols]
-    with open(f'../output/{race}_{contest}.csv', 'w') as ofp:
+
+    cols = ["Ward", *cols]
+    Path(f"../output/{race}").mkdir(parents=True, exist_ok=True)
+    with open(f"../output/{race}/{contest}.csv", "w") as ofp:
         writer = csv.writer(ofp)
         writer.writerow(cols)
         writer.writerows(subtables)
-    return 
-        
+
 
 async def fetch_contest_data(
     race: int, contest: int, cs: ClientSession, elec_data: dict, sem: Semaphore
@@ -83,10 +105,10 @@ async def fetch_contest_data(
         resp.raise_for_status()
         # This happens for some contests e.g. https://chicagoelections.gov/elections/results/7/download?contest=334&ward=&precinct=
         if resp.content_type != "application/vnd.ms-excel":
-            raise RuntimeError(f"race {race} contest {contest} did not return an Excel spreadsheet")
-        return {'contest': contest,
-                'race': race,
-                'data': await resp.content.read()}
+            raise RuntimeError(
+                f"race {race} contest {contest} did not return an Excel spreadsheet"
+            )
+        return {"contest": contest, "race": race, "data": await resp.content.read()}
     except Exception as e:
         print(e, race, contest)
         return None
@@ -113,32 +135,31 @@ async def fetch_contests():
 async def main():
     with open("../output/results-metadata.json", "r") as ifp:
         results_metadata: dict = load(ifp)
+    
     pairs = (
         (contest, race)
         for contest, c_info in results_metadata.items()
         for race in c_info["races"]
     )
+    
     if DEBUG == 1:
-        pairs = list(pairs)[:1]
-        # pprint(pairs)
+        pairs = list(pairs)[:1000]
+
     contest_data = {}
     sem = Semaphore(10)
-    # maybe we can store this sqlite database for fast downloads? 
+    # maybe we can store this sqlite database for fast downloads?
     async with CachedSession(cache=SQLiteBackend("test_cache")) as cs:
         contest_data = await gather(
             *(fetch_contest_data(*pair, cs, contest_data, sem) for pair in pairs)
         )
-    # TODO: Need a more elegant solution for this. Occasionally there are tables where 
+    # TODO: Need a more elegant solution for this. Occasionally there are tables where
     # parts are empty - there's multiple candidates listed as 'No Candidate'
     # e.g. https://chicagoelections.gov/elections/results/240/download?contest=390&ward=&precinct=
-    warnings.resetwarnings() 
+    warnings.resetwarnings()
     contest_data = list(filter(None, contest_data))
 
     with Pool(6) as p:
-        contest_data = p.map(book_pandas, contest_data)
-    with open("data.json", "w") as ofp:
-        dump(contest_data, ofp, indent=2)
-
+        p.map(book_pandas, contest_data)
 
 if __name__ == "__main__":
     run(main())
