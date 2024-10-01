@@ -27,10 +27,10 @@ def transform_type(v):
         return None
     if type(v) is float:
         return int(v) if v.is_integer() else v
+    elif "%" in v:
+        return float(v[:-1].replace(",", ""))
     elif "," in v:
         return int(v.replace(",", ""))
-    elif "%" in v:
-        return float(v[:-1])
 
 def book_pandas(d):
     contest, race = d["contest"], d["race"]
@@ -50,12 +50,13 @@ def book_pandas(d):
     cur_row = next(rows)
     cols = []
     while cur_row:
-        ward = cur_row[0].value
+        ward = int(cur_row[0].value.split(" ")[1])
 
         # TODO: unfortunately there's a bug where, for certain races that simply can't be generated e.g.
         cols = next(rows)
+
         cols = [
-            col.value.lower() if col.value != "%" else cols[i - 1].value + " percent"
+            col.value if col.value != "%" else cols[i - 1].value + " Percent"
             for i, col in enumerate(cols)
         ]
         cur_row = next(rows)
@@ -66,16 +67,19 @@ def book_pandas(d):
                     for cell in cur_row
                 ]
             ):
-                row = [
-                    int(ward.split(" ")[1]),
-                    *(
-                        cell.value
-                        if cell.ctype not in (xlrd.XL_CELL_EMPTY, xlrd.XL_CELL_BLANK)
-                        else None
-                        for cell in cur_row
-                    ),
-                ]
-                subtables.append(row)
+                if cur_row[0].value != 'Total':
+                    precinct = transform_type(cur_row[0].value)
+                    row = [
+                        f'{ward:02d}{precinct:02d}',
+                        ward,
+                        *(
+                            transform_type(cell.value)
+                            if cell.ctype not in (xlrd.XL_CELL_EMPTY, xlrd.XL_CELL_BLANK)
+                            else None
+                            for cell in cur_row
+                        ),
+                    ]
+                    subtables.append(row)
                 cur_row = next(rows)
         except StopIteration:
             pass
@@ -86,7 +90,14 @@ def book_pandas(d):
             raise e
         cur_row = next(rows, None)
 
-    cols = ["Ward", *cols]
+    conv = {
+        "Total Voters": "total",
+        "Precinct": "precinct",
+        "Registered Voters": "registered",
+        "Ballots Cast": "ballots",
+        "Turnout": "turnout"
+    }
+    cols = ["ward", *[conv.get(col, col) for col in cols]]
     Path(f"../output/{race}").mkdir(parents=True, exist_ok=True)
     with open(f"../output/{race}/{contest}.csv", "w") as ofp:
         writer = csv.writer(ofp)
