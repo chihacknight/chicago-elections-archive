@@ -1,0 +1,440 @@
+{
+  "242": {
+    "year": 2023,
+    "date": "4/3/23",
+    "label": "2023 Municipal Runoff - 4/3/23",
+    "races": {}
+  },
+  "241": {
+    "year": 2023,
+    "date": "2/28/23",
+    "label": "2023 Municipal General - 2/28/23",
+    "races": {}
+  },
+  "156": {
+    "year": 2022,
+    "date": "11/8/2022",
+    "label": "2022 General Election - 11/8/2022",
+    "races": {}
+  },
+  "252": {
+    "year": 2022,
+    "date": "6/28/2022",
+    "label": "2022 Primary - Democratic - 6/28/2022",
+    "races": {}
+  },
+  "253": {
+    "year": 2022,
+    "date": "6/28/2022",
+    "label": "2022 Primary - Republican - 6/28/2022",
+    "races": {}
+  },
+  "254": {
+    "year": 2022,
+    "date": "6/28/2022",
+    "label": "2022 Primary - Libertarian - 6/28/2022",
+    "races": {}
+  },
+  "255": {
+    "year": 2022,
+    "date": "6/28/2022",
+    "label": "2022 Primary - Non-Partisan - 6/28/2022",
+    "races": {}
+  },
+  "251": {
+    "year": 2020,
+    "date": "11/3/2020",
+    "label": "2020 General Election - 11/3/2020",
+    "races": {}
+  },
+  "250": {
+    "year": 2020,
+    "date": "3/17/2020",
+    "label": "2020 Primary - Non-Partisan - 3/17/2020",
+    "races": {}
+  },
+  "240": {
+    "year": 2020,
+    "date": "3/17/2020",
+    "label": "2020 Primary - Republican - 3/17/2020",
+    "races": {}
+  },
+  "230": {
+    "year": 2020,
+    "date": "3/17/2020",
+    "label": "2020 Primary - Democratic - 3/17/2020",
+    "races": {}
+  },
+  "220": {
+    "year": 2019,
+    "date": "4/2/2019",
+    "label": "2019 Municipal Runoffs - 4/2/2019",
+    "races": {}
+  },
+  "210": {
+    "year": 2019,
+    "date": "2/26/2019",
+    "label": "2019 Municipal General - 2/26/2019",
+    "races": {}
+  },
+  "200": {
+    "year": 2018,
+    "date": "11/6/2018",
+    "label": "2018 General Election - 11/6/2018",
+    "races": {}
+  },
+  "2": {
+    "year": 2018,
+    "date": "3/20/2018",
+    "label": "2018 Primary - Non-Partisan - 3/20/2018",
+    "races": {}
+  },
+  "1": {
+    "year": 2018,
+    "date": "3/20/2018",
+    "label": "2018 Primary - Republican - 3/20/2018",
+    "races": {}
+  },
+  "0": {
+    "year": 2018,
+    "date": "3/20/2018",
+    "label": "2018 Primary - Democratic - 3/20/2018",
+    "races": {}
+  },
+  "3": {
+    "year": 2017,
+    "date": "2/28/2017",
+    "label": "2017 Municipal General - 2/28/2017",
+    "races": {}
+  },
+  "4": {
+    "year": 2016,
+    "date": "11/8/2016",
+    "label": "2016 General Election - 11/8/2016",
+    "races": {}
+  },
+  "8": {
+    "year": 2016,
+    "date": "3/15/2016",
+    "label": "2016 Primary - Non-Partisan - 3/15/2016",
+    "races": {}
+  },
+  "7": {
+    "year": 2016,
+    "date": "3/15/2016",
+    "label": "2016 Primary - Green - 3/15/2016",
+    "races": {}
+  },
+  "6": {
+    "year": 2016,
+    "date": "3/15/2016",
+    "label": "2016 Primary - Republican - 3/15/2016",
+    "races": {}
+  },
+  "5": {
+    "year": 2016,
+    "date": "3/15/2016",
+    "label": "2016 Primary - Democratic - 3/15/2016",
+    "races": {}
+  },
+  "9": {
+    "year": 2015,
+    "date": "4/7/2015",
+    "label": "2015 Municipal Runoffs - 4/7/2015",
+    "races": {}
+  },
+  "10": {
+    "year": 2015,
+    "date": "2/24/2015",
+    "label": "2015 Municipal General - 2/24/2015",
+    "races": {}
+  },
+  "11": {
+    "year": 2014,
+    "date": "11/4/2014",
+    "label": "2014 General Election - 11/4/2014",
+    "races": {}
+  },
+  "12": {
+    "year": 2014,
+    "date": "3/18/2014",
+    "label": "2014 Primary - Democratic - 3/18/2014",
+    "races": {}
+  },
+  "13": {
+    "year": 2014,
+    "date": "3/18/2014",
+    "label": "2014 Primary - Republican - 3/18/2014",
+    "races": {}
+  },
+  "14": {
+    "year": 2014,
+    "date": "3/18/2014",
+    "label": "2014 Primary - Green - 3/18/2014",
+    "races": {}
+  },
+  "15": {
+    "year": 2014,
+    "date": "3/18/2014",
+    "label": "2014 Primary - Non-Partisan - 3/18/2014",
+    "races": {}
+  },
+  "16": {
+    "year": 2013,
+    "date": "4/9/2013",
+    "label": "2013 Special Election - 2nd Congressional - 4/9/2013",
+    "races": {}
+  },
+  "17": {
+    "year": 2013,
+    "date": "2/26/2013",
+    "label": "2013 Special Primary - 2nd Congressional - Democratic - 2/26/2013",
+    "races": {}
+  },
+  "18": {
+    "year": 2013,
+    "date": "2/26/2013",
+    "label": "2013 Special Priamry - 2nd Congressional - Republican - 2/26/2013",
+    "races": {}
+  },
+  "19": {
+    "year": 2012,
+    "date": "11/6/2012",
+    "label": "2012 General Election - 11/6/2012",
+    "races": {}
+  },
+  "20": {
+    "year": 2012,
+    "date": "3/20/2012",
+    "label": "2012 Primary - Democratic - 3/20/2012",
+    "races": {}
+  },
+  "21": {
+    "year": 2012,
+    "date": "3/20/2012",
+    "label": "2012 Primary - Republican - 3/20/2012",
+    "races": {}
+  },
+  "22": {
+    "year": 2012,
+    "date": "3/20/2012",
+    "label": "2012 Primary - Green - 3/20/2012",
+    "races": {}
+  },
+  "23": {
+    "year": 2012,
+    "date": "3/20/2012",
+    "label": "2012 Primary - Non-Partisan - 3/20/2012",
+    "races": {}
+  },
+  "24": {
+    "year": 2011,
+    "date": "4/5/2011",
+    "label": "2011 Municipal Runoffs - 4/5/2011",
+    "races": {}
+  },
+  "25": {
+    "year": 2011,
+    "date": "2/22/2011",
+    "label": "2011 Municipal General - 2/22/2011",
+    "races": {}
+  },
+  "26": {
+    "year": 2010,
+    "date": "11/2/2010",
+    "label": "2010 General Election - 11/2/2010",
+    "races": {}
+  },
+  "27": {
+    "year": 2010,
+    "date": "2/2/2010",
+    "label": "2010 Primary - Democratic - 2/2/2010",
+    "races": {}
+  },
+  "29": {
+    "year": 2010,
+    "date": "2/2/2010",
+    "label": "2010 Primary - Republican - 2/2/2010",
+    "races": {}
+  },
+  "31": {
+    "year": 2010,
+    "date": "2/2/2010",
+    "label": "2010 Primary - Green - 2/2/2010",
+    "races": {}
+  },
+  "33": {
+    "year": 2009,
+    "date": "4/7/2009",
+    "label": "2009 Special Election - 5th Congressional - 4/7/2009",
+    "races": {}
+  },
+  "34": {
+    "year": 2009,
+    "date": "3/3/2009",
+    "label": "2009 Special Primary - 5th Congressional - Democratic - 3/3/2009",
+    "races": {}
+  },
+  "36": {
+    "year": 2009,
+    "date": "3/3/2009",
+    "label": "2009 Special Primary - 5th Congressional - Republican - 3/3/2009",
+    "races": {}
+  },
+  "38": {
+    "year": 2009,
+    "date": "3/3/2009",
+    "label": "2009 Special Primary - 5th Congressional - Green - 3/3/2009",
+    "races": {}
+  },
+  "40": {
+    "year": 2008,
+    "date": "11/4/2008",
+    "label": "2008 General Election - 11/4/2008",
+    "races": {}
+  },
+  "45": {
+    "year": 2008,
+    "date": "2/4/2008",
+    "label": "2008 Primary - Democratic - 2/4/2008",
+    "races": {}
+  },
+  "50": {
+    "year": 2008,
+    "date": "2/4/2008",
+    "label": "2008 Primary - Republican - 2/4/2008",
+    "races": {}
+  },
+  "55": {
+    "year": 2008,
+    "date": "2/4/2008",
+    "label": "2008 Primary - Green - 2/4/2008",
+    "races": {}
+  },
+  "60": {
+    "year": 2007,
+    "date": "4/17/2007",
+    "label": "2007 Municipal Runoffs - 4/17/2007",
+    "races": {}
+  },
+  "65": {
+    "year": 2007,
+    "date": "2/27/2007",
+    "label": "2007 Municipal General - 2/27/2007",
+    "races": {}
+  },
+  "70": {
+    "year": 2006,
+    "date": "11/7/2006",
+    "label": "2006 General Election - 11/7/2006",
+    "races": {}
+  },
+  "75": {
+    "year": 2006,
+    "date": "3/21/2006",
+    "label": "2006 Primary - Democratic - 3/21/2006",
+    "races": {}
+  },
+  "80": {
+    "year": 2006,
+    "date": "3/21/2006",
+    "label": "2006 Primary - Republican - 3/21/2006",
+    "races": {}
+  },
+  "85": {
+    "year": 2006,
+    "date": "3/21/2006",
+    "label": "2006 Primary - Other - 3/21/2006",
+    "races": {}
+  },
+  "90": {
+    "year": 2004,
+    "date": "11/2/2004",
+    "label": "2004 General Election - 11/2/2004",
+    "races": {}
+  },
+  "95": {
+    "year": 2004,
+    "date": "3/16/2004",
+    "label": "2004 Primary - Democratic - 3/16/2004",
+    "races": {}
+  },
+  "100": {
+    "year": 2004,
+    "date": "3/16/2004",
+    "label": "2004 Primary - Republican - 3/16/2004",
+    "races": {}
+  },
+  "101": {
+    "year": 2004,
+    "date": "3/16/2004",
+    "label": "2004 Primary - Other - 3/16/2004",
+    "races": {}
+  },
+  "105": {
+    "year": 2003,
+    "date": "4/1/2003",
+    "label": "2003 Municipal Runoffs - 4/1/2003",
+    "races": {}
+  },
+  "110": {
+    "year": 2003,
+    "date": "2/25/2003",
+    "label": "2003 Municipal General - 2/25/2003",
+    "races": {}
+  },
+  "115": {
+    "year": 2002,
+    "date": "11/5/2002",
+    "label": "2002 General Election - 11/5/2002",
+    "races": {}
+  },
+  "116": {
+    "year": 2002,
+    "date": "3/19/2002",
+    "label": "2002 Primary - Democratic - 3/19/2002",
+    "races": {}
+  },
+  "117": {
+    "year": 2002,
+    "date": "3/19/2002",
+    "label": "2002 Primary - Republican - 3/19/2002",
+    "races": {}
+  },
+  "118": {
+    "year": 2002,
+    "date": "3/19/2002",
+    "label": "2002 Primary - Other - 3/19/2002",
+    "races": {}
+  },
+  "120": {
+    "year": 2000,
+    "date": "11/7/2000",
+    "label": "2000 General Election - 11/7/2000",
+    "races": {}
+  },
+  "124": {
+    "year": 2000,
+    "date": "3/21/2000",
+    "label": "2000 Primary - Democratic - 3/21/2000",
+    "races": {}
+  },
+  "125": {
+    "year": 2000,
+    "date": "3/21/2000",
+    "label": "2000 Primary - Republican - 3/21/2000",
+    "races": {}
+  }
+  "19830": {
+      "year": 1983,
+      "date": "2/22/1983",
+      "label": "1983 Primary - Democratic",
+      "races": {"0": "Mayor"}
+  },
+  "19831": {
+      "year": 1983,
+      "date": "4/12/1983",
+      "label": "1983 General Election",
+      "races": {"0": "Mayor"}
+  }
+}

@@ -6859,17 +6859,5 @@
       "299": "COMMITTEEMAN - 49TH WARD",
       "300": "COMMITTEEMAN - 50TH WARD"
     }
-  },
-  "19830": {
-    "year": 1983,
-    "date": "2/22/1983",
-    "label": "1983 Primary - Democratic",
-    "races": { "0": "Mayor" }
-  },
-  "19831": {
-    "year": 1983,
-    "date": "4/12/1983",
-    "label": "1983 General Election",
-    "races": { "0": "Mayor" }
   }
 }
