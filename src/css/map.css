@@ -78,6 +78,27 @@ main.map + footer {
   line-height: 1;
 }
 
+#legend .horizontal-bars {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify: space-between;
+  text-align: center;
+}
+
+#legend .horizontal-bars .color-bar {
+  height: 1rem;
+  width: 0.5rem;
+  flex: 1;
+}
+#legend .horizontal-bars p {
+  margin: 0 0 0.5rem 0;
+  padding: 0;
+  width: 100%;
+  text-align: center;
+  padding-left: 5%;
+}
+
 .legend-item {
   @apply flex flex-row items-center justify-start text-sm;
 }

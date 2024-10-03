@@ -132,6 +132,8 @@ const MapPage = (props) => {
             candidates={mapStore.candidates || []}
             totalVotes={mapStore.electionResults.total}
             displayOverrides={props.displayOverrides}
+            colors={mapStore?.colors || []}
+            values={mapStore?.values || []}
           />
           <Show when={UNOFFICIAL_RESULTS.includes(state.election)}>
             <p class="unofficial-notice">

@@ -66,6 +66,8 @@
   "dependencies": {
     "classlist-polyfill": "^1.2.0",
     "d3-dsv": "^3.0.1",
+    "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.1.0",
     "date-input-polyfill": "^2.14.0",
     "formdata-polyfill": "^4.0.10",
     "maplibre-gl": "^2.1.7",

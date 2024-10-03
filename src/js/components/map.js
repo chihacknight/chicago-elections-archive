@@ -2,8 +2,24 @@ import { createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { useMapStore } from "../providers/map"
 import { usePopup } from "../providers/popup"
 import { descending, fromEntries } from "../utils"
-import { getDataCols, getColor } from "../utils/map"
-import { getPrecinctYear, fetchCsvData } from "../utils/data"
+import { getDataCols, getColor, getDataAccesor } from "../utils/map"
+import { getPrecinctYear, fetchCsvData, CONSTANTS } from "../utils/data"
+import { scaleQuantile } from "d3-scale"
+import { schemeBlues } from "d3-scale-chromatic"
+
+const getSourceConfig = (sourceName) => {
+  const year = sourceName.split("-")[1]
+  return {
+    type: "geojson",
+    data: `/data/geojson/precincts-${year}.geojson`,
+    maxzoom: 12,
+    attribution:
+      year == 1983
+        ? '<a href="https://www.chicagoelectionsproject.com/" target="_blank">Chicago Elections Project</a>'
+        : '<a href="https://chicagoelections.com/" target="_blank">Chicago Board of Election Commissioners</a>',
+    promoteId: "id",
+  }
+}
 
 const compactAttribControl = () => {
   const control = document.querySelector("details.maplibregl-ctrl-attrib")
@@ -90,43 +106,15 @@ const createPrecinctLayerDefinition = (data, election, race, year) => ({
         "case",
         ["==", ["feature-state", "colorValue"], null],
         "#ffffff",
-        [
-          "interpolate",
-          ["linear"],
-          ["feature-state", "colorValue"],
-          0,
-          "#ffffff",
-          100,
-          ["feature-state", "color"],
-        ],
-      ],
-      "fill-opacity": [
-        "interpolate",
-        ["linear"],
-        ["zoom"],
-        0,
-        1.0,
-        10,
-        1.0,
-        14,
-        0.8,
+        ["feature-state", "color"],
       ],
     },
   },
   legendData: aggregateElection(data, election, race),
 })
 
-function setFeatureData(map, dataCols, source, feature) {
-  const featureData = fromEntries(
-    Object.entries(feature).filter(([col]) => dataCols.includes(col))
-  )
-  const featureDataEntries = [...Object.entries(featureData)]
-  const featureDataValues = featureDataEntries.map(([, value]) => value)
-  const colorValue = Math.max(...featureDataValues)
-  const colorIndex = dataCols.indexOf(
-    featureDataEntries[featureDataValues.indexOf(colorValue)][0]
-  )
-
+function setFeatureData(map, source, colorScale, feature) {
+  const color = colorScale(feature.value)
   map.setFeatureState(
     {
       source,
@@ -134,8 +122,8 @@ function setFeatureData(map, dataCols, source, feature) {
       id: feature.id,
     },
     {
-      color: getColor(featureDataEntries[colorIndex][0], colorIndex),
-      colorValue: colorValue,
+      color: color,
+      colorValue: feature.value,
       ...feature,
     }
   )
@@ -225,13 +213,29 @@ const Map = (props) => {
     setPopup({ click: false, hover: false })
 
     const updateLayer = () => {
-      mapStore.map.removeLayer("precincts")
-      mapStore.map.removeFeatureState({
-        source: mapSource(),
-        sourceLayer: "precincts",
-      })
-      data.forEach((feature) => {
-        setFeatureData(map, dataCols, mapSource(), feature)
+      const sourceName = mapSource()
+      if (mapStore.map.getLayer("precincts")) {
+        mapStore.map.removeLayer("precincts")
+        mapStore.map.removeFeatureState({
+          source: sourceName,
+        })
+      }
+
+      if (!mapStore.map.getSource(sourceName)) {
+        mapStore.map.addSource(sourceName, getSourceConfig(sourceName))
+      }
+
+      const cleanData = data.map(getDataAccesor(dataCols))
+      const colorScale = scaleQuantile(
+        cleanData.map(({ value }) => value),
+        schemeBlues[5]
+      )
+
+      const colors = colorScale.range()
+      const values = colorScale.quantiles()
+      setMapStore({colors,values})
+      cleanData.forEach((feature) => {
+        setFeatureData(map, sourceName, colorScale, feature)
       })
       mapStore.map.addLayer(def.layerDefinition, "place_other")
     }
@@ -239,7 +243,7 @@ const Map = (props) => {
     if (mapStore.map.isStyleLoaded()) {
       updateLayer()
     } else {
-      mapStore.map.once("render", updateLayer)
+      mapStore.map.once("render", updateLayer())
     }
   })
 

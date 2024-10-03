@@ -37,3 +37,31 @@ export const getDataCols = (row) =>
   Object.keys(row || {}).filter(
     (row) => row.includes("Percent") || row === "turnout"
   )
+
+export const getDataAccesor = (dataCols) => {
+  if (dataCols.length === 1) {
+    return (row) => ({
+      value: row[dataCols[0]],
+      id: row.id,
+      ...row,
+    })
+  }
+
+  return (row) =>
+    dataCols.reduce(
+      (acc, col) => {
+        const value = row[col]
+        if (value > acc.value) {
+          acc.value = value
+          acc.column = col
+        }
+        return acc
+      },
+      {
+        value: -Math.pow(10, 10),
+        column: "",
+        id: row.id,
+        ...row,
+      }
+    )
+}

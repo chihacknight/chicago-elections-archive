@@ -1,7 +1,7 @@
 import { createContext, useContext } from "solid-js"
 import { createStore } from "solid-js/store"
 
-const MapContext = createContext()
+export const MapContext = createContext()
 const useMapStore = () => useContext(MapContext)
 
 function MapProvider(props) {
@@ -9,6 +9,7 @@ function MapProvider(props) {
   const store = createStore({
     map: null,
     candidates: [],
+    colorScale: null
   })
 
   return (
