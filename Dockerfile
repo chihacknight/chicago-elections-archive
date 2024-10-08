@@ -1,4 +1,4 @@
-FROM node:17
+FROM node:18
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -10,11 +10,9 @@ RUN apt-get update && \
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package*.json ./
-COPY pyproject.toml ./
+COPY requirements.txt ./
 
-RUN pip install poetry
-RUN pip install esridump
-RUN poetry install
+RUN pip install -r requirements.txt --break-system-packages
 RUN npm install
 RUN npm install -g mapshaper
 RUN git clone https://github.com/mapbox/tippecanoe.git
