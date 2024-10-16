@@ -88,6 +88,10 @@ module.exports = function (eleventyConfig) {
     },
   })
 
+  // add pasthrough tiles/mapstyle.json
+  eleventyConfig.addPassthroughCopy("tiles/mapstyle.json")
+
+
   return {
     dir: {
       input: "site/",
