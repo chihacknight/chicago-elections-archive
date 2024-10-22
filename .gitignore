@@ -5,7 +5,6 @@ input/*
 output/*
 !output/.keep
 !output/results-metadata.json
-!output/geojson
 deploy-output
 dist/*
 !dist/.keep
@@ -24,4 +23,4 @@ site/data/*
 !site/data/.keep
 tiles/*
 !tiles/.keep
-pnpm-lock.yaml
+!tiles/mapstyle.json
