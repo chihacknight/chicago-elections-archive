@@ -1,4 +1,4 @@
-ward,precinct,total,Yes,Yes Percent,No,No Percent
+id,ward,precinct,total,Yes,Yes Percent,No,No Percent
 0101,1,1,505,377,74.65,128,25.35
 0102,1,2,466,330,70.82,136,29.18
 0103,1,3,606,509,83.99,97,16.01

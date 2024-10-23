@@ -1,4 +1,4 @@
-ward,precinct,registered,ballots,turnout
+id,ward,precinct,registered,ballots,turnout
 0101,1,1,1512,779,51.52
 0102,1,2,1471,790,53.7
 0103,1,3,1586,859,54.16

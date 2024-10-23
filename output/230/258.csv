@@ -1,4 +1,4 @@
-ward,precinct,total,"Michael Scott, Jr.","Michael Scott, Jr. Percent"
+id,ward,precinct,total,"Michael Scott, Jr.","Michael Scott, Jr. Percent"
 2401,24,1,151,151,100.0
 2402,24,2,135,135,100.0
 2403,24,3,166,166,100.0
