@@ -12,11 +12,11 @@ RUN apt-get update && \
 COPY package*.json ./
 COPY requirements.txt ./
 
-RUN pip install -r requirements.txt --break-system-packages
 RUN npm install
 RUN npm install -g mapshaper
 RUN git clone https://github.com/mapbox/tippecanoe.git
 RUN cd tippecanoe && make -j && make install
+RUN pip install -r requirements.txt --break-system-packages
 
 # Bundle app source
 COPY . /usr/src/app/

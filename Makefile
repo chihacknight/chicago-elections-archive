@@ -4,10 +4,10 @@ S3_REGION = us-east-1
 PRECINCT_YEARS := 1983 2000 2003 2004 2007 2008 2010 2011 2012 2015 2019 2021 2022 2023
 ELECTION_IDS := $(shell cat input/results-metadata.json | jq -r 'keys[]')
 IGNORE_RESULTS := output/results/7/334.csv output/results/7/335.csv output/results/80/250.csv output/results/80/255.csv output/results/80/253.csv output/results/80/261.csv output/results/80/266.csv 
-RESULTS := $(filter-out $(IGNORE_RESULTS),$(foreach id,$(ELECTION_IDS),$(foreach result,$(shell cat input/results-metadata.json | jq -r '."$(id)".races|keys[]'),output/results/$(id)/$(result).csv)))
+#RESULTS := $(filter-out $(IGNORE_RESULTS),$(foreach id,$(ELECTION_IDS),$(foreach result,$(shell cat input/results-metadata.json | jq -r '."$(id)".races|keys[]'),output/results/$(id)/$(result).csv)))
 
 .PHONY: all
-all: input/results-metadata.json output/results-metadata.json $(RESULTS) $(foreach year,$(PRECINCT_YEARS),output/precincts-$(year).geojson tiles/precincts-$(year)/)
+all: output/results-metadata.json $(RESULTS) $(foreach year,$(PRECINCT_YEARS),output/precincts-$(year).geojson tiles/precincts-$(year)/)
 
 .PRECIOUS: input/%.html output/results/%.csv
 
@@ -146,27 +146,27 @@ output/precincts-%.geojson: input/wards.geojson
 # Hacky workaround for getting Cook results for some races
 output/results/252/17.csv: input/252/17.html input/cook-252/17.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/252/19.csv: input/252/19.html input/cook-252/19.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/252/23.csv: input/252/23.html input/cook-252/23.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/252/109.csv: input/252/109.html input/cook-252/109.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/252/14.csv: input/252/14.html input/cook-252/14.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/210/9.csv: output/results/210/9-int.csv output/results/210/10-int.csv
@@ -175,22 +175,11 @@ output/results/210/9.csv: output/results/210/9-int.csv output/results/210/10-int
 .INTERMEDIATE:
 output/results/210/9-int.csv: input/210/9.html
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 
 .INTERMEDIATE:
 output/results/210/10-int.csv: output/results/210/10.csv
 	xsv select 1,7- $< > $@
-
-output/results/%/0.csv: input/%/0.html
-	mkdir -p $(dir $@)
-	echo "id,ward,precinct,registered,ballots,turnout" > $@
-	poetry run python scripts/scrape_table.py $< | \
-	xsv select --no-headers 1-3,6,7,9 -| \
-	xsv slice --no-headers -s 1 - >> $@
-
-output/results/%.csv: input/%.html
-	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
 
 input/cook-precincts.geojson: input/raw-cook-precincts.geojson
 	mapshaper -i $< \
@@ -199,7 +188,7 @@ input/cook-precincts.geojson: input/raw-cook-precincts.geojson
 	-o $@
 
 input/raw-cook-precincts.geojson:
-	poetry run esri2geojson https://gis12.cookcountyil.gov/arcgis/rest/services/electionSrvcLite/MapServer/1 $@
+	esri2geojson https://gis12.cookcountyil.gov/arcgis/rest/services/electionSrvcLite/MapServer/1 $@
 
 input/precincts-2021.geojson: input/raw-precincts-2021.geojson input/wards.geojson
 	mapshaper -i $< snap \
@@ -225,21 +214,17 @@ output/precincts-1983.geojson: input/wards.geojson
 
 output/results/19831/0.csv: input/1983/19831.csv
 	mkdir -p $(dir $@)
-	cat $< | poetry run python scripts/process_1983.py > $@
+	cat $< | python scripts/process_1983.py > $@
 
 output/results/19830/0.csv: input/1983/19830.csv
 	mkdir -p $(dir $@)
-	cat $< | poetry run python scripts/process_1983.py > $@
-
-input/cook-252/%.csv:
-	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_cook_2022_primary.py $* > $@
+	cat $< | python scripts/process_1983.py > $@
 
 input/1983/19831.csv: input/1983/
-	poetry run in2csv input/1983/Mayoral_General/ElectionResults_Spreadsheet/1983_MayoralGeneral_ElectionResultsSpreadsheet.xlsx > $@
+	in2csv input/1983/Mayoral_General/ElectionResults_Spreadsheet/1983_MayoralGeneral_ElectionResultsSpreadsheet.xlsx > $@
 
 input/1983/19830.csv: input/1983/
-	poetry run in2csv input/1983/Mayoral_Primary/ElectionResults_Spreadsheet/1983_MayoralPrimary_ElectionResultsSpreadsheet.xlsx > $@
+	in2csv input/1983/Mayoral_Primary/ElectionResults_Spreadsheet/1983_MayoralPrimary_ElectionResultsSpreadsheet.xlsx > $@
 
 input/1983/: input/1983.zip
 	unzip -DD -d input $<
@@ -254,11 +239,8 @@ input/%.html:
 	-H "Content-Type: application/x-www-form-urlencoded" \
 	-d "election=$(word 1,$(subst /, ,$*))&race=$(filter-out 0,$(word 2,$(subst /, ,$*)))&ward=&precinct=" -o $@
 
-output/results-metadata.json: input/results-metadata.json
-	cat $< | poetry run python scripts/process_results_metadata.py > $@
-
-input/results-metadata.json:
-	poetry run python scripts/scrape_results_metadata.py > $@
+output/results-metadata.json:
+	python scripts/scrape_metadata.py
 
 input/wards.geojson:
 	wget -O $@ 'https://data.cityofchicago.org/api/geospatial/sp34-6z76?method=export&format=GeoJSON'

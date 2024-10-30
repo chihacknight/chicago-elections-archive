@@ -7,7 +7,7 @@ Explore precinct-level results from recent and historical Chicago elections.
 ## Setup - native
 
 ```shell
-poetry install
+pip install -r requirements.txt
 npm install
 make all
 ```
@@ -31,6 +31,10 @@ docker-compose up
 ```
 
 ## Updating Data
+
+### Updating Election Data:
+
+### Upgrading Geographic data:
 
 To update data, modify the `ELECTIONS` variable in `scripts/scrape_results_metadata.py` with the ID from the [Board of Election Commissioners website](https://chicagoelections.gov/en/election-results.html), and then regenerate `input/results-metadata.json` and `output/results-metadata.json`. Then re-run `make all`, or `docker-compose run --rm app make all` forcing execution if necessary.
 
