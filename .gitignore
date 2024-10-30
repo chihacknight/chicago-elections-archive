@@ -24,3 +24,4 @@ site/data/*
 tiles/*
 !tiles/.keep
 !tiles/mapstyle.json
+chicagoelections

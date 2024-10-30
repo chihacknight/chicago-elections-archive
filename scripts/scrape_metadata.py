@@ -79,7 +79,7 @@ async def fetch_metadata(cs: CachedSession, sem: Semaphore, race_id: str, race_t
 
 async def main():
     sem = Semaphore(6)
-    async with CachedSession(cache=SQLiteBackend("test_cache")) as cs:
+    async with CachedSession(cache=SQLiteBackend("chicagoelections_cache")) as cs:
         races = await fetch_races(cs)
         contests = await gather(*[fetch_metadata(cs, sem, race[0], race[1]) for race in races])
     race_contest_map = dict(zip(map(lambda r: r[0], races), contests))
