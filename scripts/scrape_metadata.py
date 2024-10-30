@@ -83,7 +83,7 @@ async def main():
         races = await fetch_races(cs)
         contests = await gather(*[fetch_metadata(cs, sem, race[0], race[1]) for race in races])
     race_contest_map = dict(zip(map(lambda r: r[0], races), contests))
-    json.dump(race_contest_map, open("../output/results-metadata.json", "w"), indent=2)
+    json.dump(race_contest_map, open("output/results-metadata.json", "w"), indent=2)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ agate-sql==0.5.9 ; python_version >= "3.9" and python_version < "4.0"
 agate==1.7.1 ; python_version >= "3.9" and python_version < "4.0"
 babel==2.11.0 ; python_version >= "3.9" and python_version < "4.0"
 beautifulsoup4==4.11.2 ; python_version >= "3.9" and python_version < "4.0"
+lxml
 certifi==2022.12.7 ; python_version >= "3.9" and python_version < "4"
 charset-normalizer==3.0.1 ; python_version >= "3.9" and python_version < "4"
 csvkit==1.1.0 ; python_version >= "3.9" and python_version < "4.0"
@@ -28,3 +29,4 @@ text-unidecode==1.3 ; python_version >= "3.9" and python_version < "4.0"
 urllib3==1.26.14 ; python_version >= "3.9" and python_version < "4"
 xlrd==2.0.1 ; python_version >= "3.9" and python_version < "4.0"
 esridump
+aiohttp-client-cache[sqlite]
