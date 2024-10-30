@@ -97,7 +97,7 @@ def book_pandas(d):
         "Ballots Cast": "ballots",
         "Turnout": "turnout"
     }
-    cols = ["ward", *[conv.get(col, col) for col in cols]]
+    cols = ["id", "ward", *[conv.get(col, col) for col in cols]]
     Path(f"../output/{race}").mkdir(parents=True, exist_ok=True)
     with open(f"../output/{race}/{contest}.csv", "w") as ofp:
         writer = csv.writer(ofp)
