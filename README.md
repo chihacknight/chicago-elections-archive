@@ -7,7 +7,7 @@ Explore precinct-level results from recent and historical Chicago elections.
 ## Setup - native
 
 ```shell
-poetry install
+pip install -r requirements.txt
 npm install
 make all
 ```

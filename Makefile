@@ -146,27 +146,27 @@ output/precincts-%.geojson: input/wards.geojson
 # Hacky workaround for getting Cook results for some races
 output/results/252/17.csv: input/252/17.html input/cook-252/17.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/252/19.csv: input/252/19.html input/cook-252/19.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/252/23.csv: input/252/23.html input/cook-252/23.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/252/109.csv: input/252/109.html input/cook-252/109.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/252/14.csv: input/252/14.html input/cook-252/14.csv
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
 
 output/results/210/9.csv: output/results/210/9-int.csv output/results/210/10-int.csv
@@ -175,7 +175,7 @@ output/results/210/9.csv: output/results/210/9-int.csv output/results/210/10-int
 .INTERMEDIATE:
 output/results/210/9-int.csv: input/210/9.html
 	mkdir -p $(dir $@)
-	poetry run python scripts/scrape_table.py $< > $@
+	python scripts/scrape_table.py $< > $@
 
 .INTERMEDIATE:
 output/results/210/10-int.csv: output/results/210/10.csv
@@ -188,7 +188,7 @@ input/cook-precincts.geojson: input/raw-cook-precincts.geojson
 	-o $@
 
 input/raw-cook-precincts.geojson:
-	poetry run esri2geojson https://gis12.cookcountyil.gov/arcgis/rest/services/electionSrvcLite/MapServer/1 $@
+	esri2geojson https://gis12.cookcountyil.gov/arcgis/rest/services/electionSrvcLite/MapServer/1 $@
 
 input/precincts-2021.geojson: input/raw-precincts-2021.geojson input/wards.geojson
 	mapshaper -i $< snap \
@@ -214,17 +214,17 @@ output/precincts-1983.geojson: input/wards.geojson
 
 output/results/19831/0.csv: input/1983/19831.csv
 	mkdir -p $(dir $@)
-	cat $< | poetry run python scripts/process_1983.py > $@
+	cat $< | python scripts/process_1983.py > $@
 
 output/results/19830/0.csv: input/1983/19830.csv
 	mkdir -p $(dir $@)
-	cat $< | poetry run python scripts/process_1983.py > $@
+	cat $< | python scripts/process_1983.py > $@
 
 input/1983/19831.csv: input/1983/
-	poetry run in2csv input/1983/Mayoral_General/ElectionResults_Spreadsheet/1983_MayoralGeneral_ElectionResultsSpreadsheet.xlsx > $@
+	in2csv input/1983/Mayoral_General/ElectionResults_Spreadsheet/1983_MayoralGeneral_ElectionResultsSpreadsheet.xlsx > $@
 
 input/1983/19830.csv: input/1983/
-	poetry run in2csv input/1983/Mayoral_Primary/ElectionResults_Spreadsheet/1983_MayoralPrimary_ElectionResultsSpreadsheet.xlsx > $@
+	in2csv input/1983/Mayoral_Primary/ElectionResults_Spreadsheet/1983_MayoralPrimary_ElectionResultsSpreadsheet.xlsx > $@
 
 input/1983/: input/1983.zip
 	unzip -DD -d input $<
