@@ -32,13 +32,19 @@ docker-compose up
 
 ## Updating Data
 
+Note: if you are updating the remote data: please generate the election data before updating the 
+
 ### Updating Election Data:
+
+To update the election data, run:
+- `python3 scripts/scrape_metadata.py`
+- `python3 scripts/scrape_elections.py`
 
 ### Upgrading Geographic data:
 
-To update data, modify the `ELECTIONS` variable in `scripts/scrape_results_metadata.py` with the ID from the [Board of Election Commissioners website](https://chicagoelections.gov/en/election-results.html), and then regenerate `input/results-metadata.json` and `output/results-metadata.json`. Then re-run `make all`, or `docker-compose run --rm app make all` forcing execution if necessary.
-
-Once this is done, `make build-output` can be run to GZIP all files in a separate directory that can be deployed to cloud storage with `make deploy`.
+- `make all` will build all of the geographic data.
+- `make build-output` can be run to GZIP all files in a separate directory that can be deployed to cloud storage with.
+- `make deploy` will upload the output to the cloud storage.
 
 To update the displayed elections on the site, update `ELECTION_ORDER` in `site/_data/site.js`.
 

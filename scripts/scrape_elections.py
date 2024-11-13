@@ -17,9 +17,22 @@ from pathlib import Path
 
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
-DEBUG = getenv("DEBUG", 1)
+DEBUG = getenv("DEBUG", 0)
 SCRAPE_PROCESSES = getenv("SCRAPE_PROCESSES", 6)  # my computer has 8 cores
 warnings.filterwarnings("error")
+headers = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.0",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "cross-site",
+    "Priority": "u=0, i",
+    "Pragma": "no-cache",
+    "Cache-Control": "no-cache",
+}
 
 
 def transform_type(v):
@@ -98,8 +111,8 @@ def book_pandas(d):
         "Turnout": "turnout"
     }
     cols = ["ward", *[conv.get(col, col) for col in cols]]
-    Path(f"../output/{race}").mkdir(parents=True, exist_ok=True)
-    with open(f"../output/{race}/{contest}.csv", "w") as ofp:
+    Path(f"output/{race}").mkdir(parents=True, exist_ok=True)
+    with open(f"output/{race}/{contest}.csv", "w") as ofp:
         writer = csv.writer(ofp)
         writer.writerow(cols)
         writer.writerows(subtables)
@@ -111,8 +124,10 @@ async def fetch_contest_data(
     await sem.acquire()
     try:
         resp = await cs.get(
-            f"https://chicagoelections.gov/elections/results/{race}/download?contest={contest}&ward=&precinct="
-        )
+            f"https://chicagoelections.gov/elections/results/{race}/download?contest={contest}&ward=&precinct=",
+            headers=headers
+            )
+
         resp.raise_for_status()
         # This happens for some contests e.g. https://chicagoelections.gov/elections/results/7/download?contest=334&ward=&precinct=
         if resp.content_type != "application/vnd.ms-excel":
@@ -144,7 +159,7 @@ async def fetch_contests():
 
 
 async def main():
-    with open("../output/results-metadata.json", "r") as ifp:
+    with open("output/results-metadata.json", "r") as ifp:
         results_metadata: dict = load(ifp)
     
     pairs = (

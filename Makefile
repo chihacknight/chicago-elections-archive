@@ -2,14 +2,10 @@ S3_BUCKET = chicago-elections-archive
 S3_REGION = us-east-1
 
 PRECINCT_YEARS := 1983 2000 2003 2004 2007 2008 2010 2011 2012 2015 2019 2021 2022 2023
-ELECTION_IDS := $(shell cat input/results-metadata.json | jq -r 'keys[]')
-IGNORE_RESULTS := output/results/7/334.csv output/results/7/335.csv output/results/80/250.csv output/results/80/255.csv output/results/80/253.csv output/results/80/261.csv output/results/80/266.csv 
-#RESULTS := $(filter-out $(IGNORE_RESULTS),$(foreach id,$(ELECTION_IDS),$(foreach result,$(shell cat input/results-metadata.json | jq -r '."$(id)".races|keys[]'),output/results/$(id)/$(result).csv)))
 
 .PHONY: all
-all: output/results-metadata.json $(RESULTS) $(foreach year,$(PRECINCT_YEARS),output/precincts-$(year).geojson tiles/precincts-$(year)/)
+all:  $(foreach year,$(PRECINCT_YEARS),output/precincts-$(year).geojson tiles/precincts-$(year)/)
 
-.PRECIOUS: input/%.html output/results/%.csv
 
 .PHONY: deploy
 deploy:
@@ -143,44 +139,6 @@ output/precincts-%.geojson: input/wards.geojson
 	-filter-fields id,WARD,PRECINCT \
 	-o $@
 
-# Hacky workaround for getting Cook results for some races
-output/results/252/17.csv: input/252/17.html input/cook-252/17.csv
-	mkdir -p $(dir $@)
-	python scripts/scrape_table.py $< > $@
-	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
-
-output/results/252/19.csv: input/252/19.html input/cook-252/19.csv
-	mkdir -p $(dir $@)
-	python scripts/scrape_table.py $< > $@
-	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
-
-output/results/252/23.csv: input/252/23.html input/cook-252/23.csv
-	mkdir -p $(dir $@)
-	python scripts/scrape_table.py $< > $@
-	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
-
-output/results/252/109.csv: input/252/109.html input/cook-252/109.csv
-	mkdir -p $(dir $@)
-	python scripts/scrape_table.py $< > $@
-	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
-
-output/results/252/14.csv: input/252/14.html input/cook-252/14.csv
-	mkdir -p $(dir $@)
-	python scripts/scrape_table.py $< > $@
-	xsv slice --no-headers -s 1 $(filter-out $<,$^) >> $@
-
-output/results/210/9.csv: output/results/210/9-int.csv output/results/210/10-int.csv
-	xsv join id $< id $(filter-out $<,$^) > $@
-
-.INTERMEDIATE:
-output/results/210/9-int.csv: input/210/9.html
-	mkdir -p $(dir $@)
-	python scripts/scrape_table.py $< > $@
-
-.INTERMEDIATE:
-output/results/210/10-int.csv: output/results/210/10.csv
-	xsv select 1,7- $< > $@
-
 input/cook-precincts.geojson: input/raw-cook-precincts.geojson
 	mapshaper -i $< \
 	-each 'id = name' \
@@ -231,13 +189,6 @@ input/1983/: input/1983.zip
 
 input/1983.zip:
 	wget -O $@ https://data.lib.vt.edu/ndownloader/files/26588033
-
-input/%.html:
-	mkdir -p $(dir $@)
-	curl https://chicagoelections.gov/en/election-results-specifics.asp \
-	-X POST \
-	-H "Content-Type: application/x-www-form-urlencoded" \
-	-d "election=$(word 1,$(subst /, ,$*))&race=$(filter-out 0,$(word 2,$(subst /, ,$*)))&ward=&precinct=" -o $@
 
 output/results-metadata.json:
 	python scripts/scrape_metadata.py
